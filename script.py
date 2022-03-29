@@ -7,13 +7,17 @@ import pandas as pd
 
 
 def main():
+    #Variables
+    pp = input("# de PP: ")
+    
+    #Ejecucion de funciones
     df = leer_archivos()
-    df = agregar_filtros(df)
+    df = agregar_filtros(df, pp)
     visualizar_datos(df)
     renombrar_columnas(df)
     agregar_columnas(df)
     df = cambiar_orden_columnas(df) #
-    exportar_datos(df)
+    exportar_datos(df, pp)
 
 def leer_archivos():
     print("Leyendo archivo")
@@ -32,9 +36,8 @@ def leer_archivos():
                     usecols=input_cols) #Se indica que con un 0 contiene el titulo de las columnas
     return df
 
-def agregar_filtros(df):
+def agregar_filtros(df, pp):
     print("Agregando filtros...")
-    pp = input("# de propuesta: ")
     #df = df[df["ID Interno Factura"] == "PP-651"]
     df = df[df["Propuesta de Pago Relacionada"]== f"PP-{pp}"] #Probar mañana domingo
     return df
@@ -46,11 +49,10 @@ def visualizar_datos(df):
     for col in df_cols:
         print(df[col].head(3))
 
-def exportar_datos(df):
+def exportar_datos(df, pp):
     #Exportar a la carpeta output
     print("Exportando archivo procesado...")
     
-    pp = input("Ingresar el numero de propuesta de pago ")
     dia = input("Ingresar dia de PP: ")
     df.to_csv(f"C:\\Users\\jaam2\\OneDrive\\Escritorio\\Automatizacion Python-Hugo\\Output\\PP-{pp} SV Walmart {dia} Marzo CONT.csv",
             sep = ",", #Separador que queremos
