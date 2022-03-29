@@ -9,15 +9,19 @@ import pandas as pd
 def main():
     #Variables
     pp = input("# de PP: ")
+    dia = input("Dia: ")
+    mes = input("# del mes: ")
+    fecha_completa = pd.to_datetime(f'{dia}/{mes}/22', dayfirst=True)
+
     
     #Ejecucion de funciones
     df = leer_archivos()
     df = agregar_filtros(df, pp)
     visualizar_datos(df)
     renombrar_columnas(df)
-    agregar_columnas(df)
+    agregar_columnas(df, fecha_completa)
     df = cambiar_orden_columnas(df) #
-    exportar_datos(df, pp)
+    exportar_datos(df, pp, dia)
 
 def leer_archivos():
     print("Leyendo archivo")
@@ -49,11 +53,10 @@ def visualizar_datos(df):
     for col in df_cols:
         print(df[col].head(3))
 
-def exportar_datos(df, pp):
+def exportar_datos(df, pp, dia):
     #Exportar a la carpeta output
     print("Exportando archivo procesado...")
     
-    dia = input("Ingresar dia de PP: ")
     df.to_csv(f"C:\\Users\\jaam2\\OneDrive\\Escritorio\\Automatizacion Python-Hugo\\Output\\PP-{pp} SV Walmart {dia} Marzo CONT.csv",
             sep = ",", #Separador que queremos
             header= True, #Que se exporte con los headers
@@ -63,9 +66,9 @@ def renombrar_columnas(df):
     print('Cambiando nombres...')
     df.rename(columns={"ID Interno Empleado":"Id interno proveedor"}, inplace = True)
     df.rename(columns={"ID Interno Factura":"Id Interno Factura"}, inplace = True)
-    print(df.columns) 
+ 
 
-def agregar_columnas(df):
+def agregar_columnas(df, fecha_completa):
     rows = df.shape[0]
     df.insert(0, "ID interno cuenta pagadora", "724")
     df.insert(1, "Id interno cxp", "114")
@@ -74,14 +77,14 @@ def agregar_columnas(df):
     df.insert(8, "Id Interno Subsidiaria", "15")
     
     #Info de otras 
-    df.insert(9, "Fecha", "")
+    df.insert(9, "Fecha", fecha_completa)
     df.insert(10, "ID externo", "")
         
 def cambiar_orden_columnas(df):
     
     df = df[["ID interno cuenta pagadora", "Id interno cxp", "Aprobado", "Moneda", "Id interno proveedor",
              "ID Externo Pago", "Nota", "Id Interno Subsidiaria",
-             "Fecha", "ID externo", "Monto a Pagar", "Id Interno Factura", "Propuesta de Pago Relacionada"]]
+             "Fecha", "ID externo", "Monto a Pagar", "Id Interno Factura"]]
 
     return df
 #print(df.shape) #Mirar las dimensiones del archivo (filas, columnas)
