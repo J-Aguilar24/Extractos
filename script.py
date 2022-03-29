@@ -7,17 +7,17 @@ import pandas as pd
 
 
 def main():
-    #Variables
-    pp = input("# de PP: ")
-    dia = input("Dia: ")
-    mes = input("# del mes: ")
-    fecha_completa = pd.to_datetime(f'{dia}/{mes}/22', dayfirst=True)
-
     
-    #Ejecucion de funciones
+    pp = input("# de PP: ")    
+
     df = leer_archivos()
     df = agregar_filtros(df, pp)
     visualizar_datos(df)
+    
+    dia = input("Dia: ")
+    mes = input("# del mes: ")
+    fecha_completa = pd.to_datetime(f'{dia}/{mes}/22', dayfirst=True)
+    
     renombrar_columnas(df)
     agregar_columnas(df, fecha_completa)
     df = cambiar_orden_columnas(df) #
