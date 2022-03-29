@@ -60,6 +60,7 @@ def exportar_datos(df):
 def renombrar_columnas(df):
     print('Cambiando nombres...')
     df.rename(columns={"ID Interno Empleado":"Id interno proveedor"}, inplace = True)
+    df.rename(columns={"ID Interno Factura":"Id Interno Factura"}, inplace = True)
     print(df.columns) 
 
 def agregar_columnas(df):
@@ -78,7 +79,7 @@ def cambiar_orden_columnas(df):
     
     df = df[["ID interno cuenta pagadora", "Id interno cxp", "Aprobado", "Moneda", "Id interno proveedor",
              "ID Externo Pago", "Nota", "Id Interno Subsidiaria",
-             "Fecha", "ID externo", "Monto a Pagar", "ID Interno Factura", "Propuesta de Pago Relacionada"]]
+             "Fecha", "ID externo", "Monto a Pagar", "Id Interno Factura", "Propuesta de Pago Relacionada"]]
 
     return df
 #print(df.shape) #Mirar las dimensiones del archivo (filas, columnas)
