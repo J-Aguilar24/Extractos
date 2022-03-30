@@ -72,6 +72,7 @@ def renombrar_columnas(df):
 
 def agregar_columnas(df, fecha_completa):
     rows = df.shape[0]
+    
     df.insert(0, "ID interno cuenta pagadora", "724")
     #df.insert(1, "Id interno cxp", "114")
     df.insert(2, "Aprobado", "APROBADO")
