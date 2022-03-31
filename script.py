@@ -20,14 +20,17 @@ def main():
     
     renombrar_columnas(df)
     agregar_columnas(df, fecha_completa)
-    df = cambiar_orden_columnas(df) #
+    df = cambiar_orden_columnas(df)
+    agregar_cuenta_pagadora(df)
     exportar_datos(df, pp, dia)
 
 def leer_archivos():
     print("Leyendo archivo")
     import os
     
-    input_cols =[1,7,8,9,12,14,17,19]
+    input_cols =["ID Interno Factura", "ID Interno Empleado", "ID Interno CxP", "ID Interno Subsidiaria",
+             "Moneda", "Nota", "Monto a Pagar", "Propuesta de Pago Relacionada"]
+
 
     #Pedir al usuario que ingrese el nombre del archivo
     path = "C:\\Users\\jaam2\\OneDrive\\Escritorio\\Automatizacion Python-Hugo\\Input\\"
@@ -42,8 +45,7 @@ def leer_archivos():
 
 def agregar_filtros(df, pp):
     print("Agregando filtros...")
-    #df = df[df["ID Interno Factura"] == "PP-651"]
-    df = df[df["Propuesta de Pago Relacionada"]== f"PP-{pp}"] #Probar mañana domingo
+    df = df[df["Propuesta de Pago Relacionada"]== f"PP-{pp}"] 
     return df
     
 def visualizar_datos(df):
@@ -73,7 +75,7 @@ def renombrar_columnas(df):
 def agregar_columnas(df, fecha_completa):
     rows = df.shape[0]
     
-    df.insert(0, "ID interno cuenta pagadora", "724")
+    df.insert(0, "ID interno cuenta pagadora", 0) #Solo se crea la columna
     #df.insert(1, "Id interno cxp", "114")
     df.insert(2, "Aprobado", "APROBADO")
     df.insert(5, "ID Externo Pago", "421388340") #Es el mismo numero?
@@ -90,6 +92,37 @@ def cambiar_orden_columnas(df):
              "Fecha", "ID externo", "Monto a Pagar", "Id Interno Factura"]]
 
     return df
+
+def agregar_cuenta_pagadora(df):
+    rows = df.shape[0] # == 3
+    for i in range(rows):
+        if df.iloc[i, 3] == "US Dollar" and df.iloc[i, 7] == 15: # SV
+            df.iat[i,0] = 724
+        elif df.iloc[i, 3] == "Quetzal GTQ" and df.iloc[i, 7] == 26: # GT
+            df.iat[i, 0] = 727
+        elif df.iloc[i, 3] == "US Dollar" and df.iloc[i, 7] == 26: # GT
+            df.iat[i, 0] = 990
+        elif df.iloc[i, 3] == "Lempira HNL" and df.iloc[i, 7] == 24: # HN
+            df.iat[i, 0] = 713
+        elif df.iloc[i, 3] == "US Dollar" and df.iloc[i, 7] == 24: # HN
+            df.iat[i, 0] = 992
+        elif df.iloc[i, 3] == "Cordoba NIO" and df.iloc[i, 7] == 25: # NI
+            df.iat[i, 0] = 1077
+        elif df.iloc[i, 3] == "US Dollar" and df.iloc[i, 7] == 25: # NI
+            df.iat[i, 0] = 1078
+        elif df.iloc[i, 3] == "Peso Dominicano DOP" and df.iloc[i, 7] == 27: # RD
+            df.iat[i, 0] = 730
+        elif df.iloc[i, 3] == "US Dollar" and df.iloc[i, 7] == 27: # RD
+            df.iat[i, 0] = 993
+        elif df.iloc[i, 3] == "Dólar Jamaiquino JMD" and df.iloc[i, 7] == 32: # RD  #AFECTA TILDE?
+            df.iat[i, 0] = 1485
+        elif df.iloc[i, 3] == "US Dollar" and df.iloc[i, 7] == 32: # RD
+            df.iat[i, 0] = 1487
+                
+        #print(df.iloc[i, 3]) #Moneda
+        #print(df.iloc[i, 7]) # Id interno sub
+    
+#PP-632
 #print(df.shape) #Mirar las dimensiones del archivo (filas, columnas)
 #print(df.columns) #Sirve para ver el nombre de las columnas
 #print(df["ID Interno Factura"].head(2))
