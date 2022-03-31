@@ -118,6 +118,9 @@ def agregar_cuenta_pagadora(df):
             df.iat[i, 0] = 1485
         elif df.iloc[i, 3] == "US Dollar" and df.iloc[i, 7] == 32: # RD
             df.iat[i, 0] = 1487
+        else:
+            df.iat[i, 0] = 0
+        
                 
         #print(df.iloc[i, 3]) #Moneda
         #print(df.iloc[i, 7]) # Id interno sub
