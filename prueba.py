@@ -16,11 +16,8 @@ documento = r"C:\Users\jaam2\OneDrive\Escritorio\Automatizacion Python-Hugo\Inpu
 df = pd.read_excel(documento)
 
 
-for i in range(len(df.columns.values)):
-    df.columns.values[i] = df.columns.values[i].lower()
-
-
-df = df[["id interno factura", "id interno empleado",
-               "id interno cxp", "id interno subsidiaria",
-               "moneda", "nota", "monto a pagar", "propuesta de pago relacionada"]]
-print(df)
+numero_pp = int(input("Cuantas PP quieres cargar? "))
+i = 0
+while i < numero_pp:
+    print(i)
+    i = i+1

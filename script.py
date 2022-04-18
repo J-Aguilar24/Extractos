@@ -65,8 +65,8 @@ def exportar_datos(df, pp, dia, mes):
             sep = ",", #Separador que queremos
             header= True, #Que se exporte con los headers
             index= False,
-            encoding='latin1') #Para que la primera columna no sea un autonumerico 
-
+            encoding='utf-8') #Para que la primera columna no sea un autonumerico 
+            #latin1
 def renombrar_columnas(df):
     print('Cambiando nombres...')
 
@@ -140,5 +140,9 @@ def agregar_cuenta_pagadora(df):
 #print(df["ID Interno Factura"].head(2))
 
 if __name__ == "__main__":
-    main()
+    numero_pp = int(input("Cuantas PP quieres cargar? "))
+    i = 0
+    while i < numero_pp:
+        main()
+        i = i+1
     input("\tProceso finalizado. ENTER PARA SALIR")
