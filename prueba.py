@@ -1,4 +1,5 @@
 from importlib.resources import path
+from pydoc import doc
 import pandas as pd 
 
 input_cols =["ID Interno Factura", "ID Interno Empleado", 
@@ -12,12 +13,11 @@ columnas_minusculas =["id interno factura", "id interno empleado",
 for i in range(len(input_cols)):
     input_cols[i] = input_cols[i].lower()
 """
-documento = r"C:\Users\jaam2\OneDrive\Escritorio\Automatizacion Python-Hugo\Input\743.xlsx"
+documento = r"C:\Users\jaam2\OneDrive\Escritorio\Automatizacion Python-Hugo\Input\Carga pt1.xlsx"
 df = pd.read_excel(documento)
 
+nombre_entidad = df["Tipo de Entidad"].iloc[1]
+nombre_entidad_acortado = nombre_entidad[3::]
 
-numero_pp = int(input("Cuantas PP quieres cargar? "))
-i = 0
-while i < numero_pp:
-    print(i)
-    i = i+1
+print(nombre_entidad)
+print(nombre_entidad_acortado)
