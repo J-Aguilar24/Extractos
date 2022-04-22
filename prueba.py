@@ -16,8 +16,3 @@ for i in range(len(input_cols)):
 documento = r"C:\Users\jaam2\OneDrive\Escritorio\Automatizacion Python-Hugo\Input\Carga pt1.xlsx"
 df = pd.read_excel(documento)
 
-nombre_entidad = df["Tipo de Entidad"].iloc[1]
-nombre_entidad_acortado = nombre_entidad[3::]
-
-print(nombre_entidad)
-print(nombre_entidad_acortado)
