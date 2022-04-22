@@ -1,11 +1,6 @@
 from importlib.resources import path
 import pandas as pd 
 
-#Libreria para la manipulacion de datos
-
-#Columnas que quiero leer(Indices parten del numero 0)
-
-
 def main():
     
     pp = input("# de PP: ")    
@@ -21,21 +16,29 @@ def main():
     renombrar_columnas(df)
     agregar_columnas(df, fecha_completa)
     #Agregar tipo entidad
-    tipo_entidad = df["tipo de entidad"].iloc[1]
-    nombre_entidad_acortado = tipo_entidad[3::]
+    try:
+        tipo_entidad = df["tipo de entidad"].iloc[0]
+        nombre_entidad_acortado = tipo_entidad[3::]
+    except Exception: 
+        print("NO SE ENCONTRÓ PP SOLICITADA...")
+        nombre_entidad_acortado = "Vacia"
     
     df = cambiar_orden_columnas(df)
     agregar_cuenta_pagadora(df)
     visualizar_datos(df) 
     
     #Recuperando el numero de subsidiaria para incluir en el nombre
-    num_subsidiaria = df["Id Interno Subsidiaria"].iloc[1]
+    try:
+        num_subsidiaria = df["Id Interno Subsidiaria"].iloc[0]
+    except Exception: 
+        print("ERROR CON PP (No encontrada)")
+        num_subsidiaria = 0
+    
     exportar_datos(df, pp, nombre_entidad_acortado, num_subsidiaria) 
 
 def leer_archivos():
     print("Leyendo archivo")
     import os
-    #nombre_hoja = input("Escribe el nombre de la hoja: ")
 
     #Pedir al usuario que ingrese el nombre del archivo
     path = "C:\\Users\\jaam2\\OneDrive\\Escritorio\\Automatizacion Python-Hugo\\Input\\"
@@ -67,13 +70,22 @@ def visualizar_datos(df):
 def exportar_datos(df, pp, nombre_entidad_acortado, num_subsidiaria):
     #Exportar a la carpeta output
     print("Exportando archivo procesado...")
-    
-    df.to_csv(f"C:\\Users\\jaam2\\OneDrive\\Escritorio\\Automatizacion Python-Hugo\\Output\\PP-{pp} {nombre_entidad_acortado} {num_subsidiaria} CONT.csv",
+    try:
+        df.to_csv(f"C:\\Users\\jaam2\\OneDrive\\Escritorio\\Automatizacion Python-Hugo\\Output\\PP-{pp} {nombre_entidad_acortado} {num_subsidiaria} CONT.csv",
+            sep = ",", #Separador que queremos
+            header= True, #Que se exporte con los headers
+            index= False,
+            encoding='latin1') #Para que la primera columna no sea un autonumerico 
+            
+    except Exception:
+        print("CAMBIANDO FORMATO POR ERROR...")
+        df.to_csv(f"C:\\Users\\jaam2\\OneDrive\\Escritorio\\Automatizacion Python-Hugo\\Output\\PP-{pp} {nombre_entidad_acortado} {num_subsidiaria} CONT.csv",
             sep = ",", #Separador que queremos
             header= True, #Que se exporte con los headers
             index= False,
             encoding='utf-8') #Para que la primera columna no sea un autonumerico 
             #latin1
+    
 def renombrar_columnas(df):
     print('Cambiando nombres...')
 
@@ -136,11 +148,7 @@ def agregar_cuenta_pagadora(df):
             df.iat[i, 0] = 1487
         else:
             df.iat[i, 0] = 0
-        
-                
-        #print(df.iloc[i, 3]) #Moneda
-        #print(df.iloc[i, 7]) # Id interno sub
-    
+
 
 #print(df.shape) #Mirar las dimensiones del archivo (filas, columnas)
 #print(df.columns) #Sirve para ver el nombre de las columnas
