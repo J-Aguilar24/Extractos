@@ -20,10 +20,17 @@ def main():
     
     renombrar_columnas(df)
     agregar_columnas(df, fecha_completa)
+    #Agregar tipo entidad
+    tipo_entidad = df["tipo de entidad"].iloc[1]
+    nombre_entidad_acortado = tipo_entidad[3::]
+    
     df = cambiar_orden_columnas(df)
     agregar_cuenta_pagadora(df)
     visualizar_datos(df) 
-    exportar_datos(df, pp, dia, mes) 
+    
+    #Recuperando el numero de subsidiaria para incluir en el nombre
+    num_subsidiaria = df["Id Interno Subsidiaria"].iloc[1]
+    exportar_datos(df, pp, nombre_entidad_acortado, num_subsidiaria) 
 
 def leer_archivos():
     print("Leyendo archivo")
@@ -57,11 +64,11 @@ def visualizar_datos(df):
     for col in df_cols:
         print(df[col].head(3))
 
-def exportar_datos(df, pp, dia, mes):
+def exportar_datos(df, pp, nombre_entidad_acortado, num_subsidiaria):
     #Exportar a la carpeta output
     print("Exportando archivo procesado...")
     
-    df.to_csv(f"C:\\Users\\jaam2\\OneDrive\\Escritorio\\Automatizacion Python-Hugo\\Output\\PP-{pp} {dia}{mes} CONT.csv",
+    df.to_csv(f"C:\\Users\\jaam2\\OneDrive\\Escritorio\\Automatizacion Python-Hugo\\Output\\PP-{pp} {nombre_entidad_acortado} {num_subsidiaria} CONT.csv",
             sep = ",", #Separador que queremos
             header= True, #Que se exporte con los headers
             index= False,
@@ -74,7 +81,7 @@ def renombrar_columnas(df):
     df.rename(columns={"nota":"Nota"}, inplace = True)
     df.rename(columns={"monto a pagar":"Monto a Pagar"}, inplace = True)
     df.rename(columns={"propuesta de pago relacionada":"Propuesta de Pago Relacionada"}, inplace = True)
-    #
+    
     df.rename(columns={"id interno empleado":"Id interno proveedor"}, inplace = True)
     df.rename(columns={"id interno factura":"Id Interno Factura"}, inplace = True)
     df.rename(columns={"id interno cxp":"Id interno cxp"}, inplace = True)
