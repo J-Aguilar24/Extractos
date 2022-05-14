@@ -1,5 +1,6 @@
 from importlib.resources import path
-import pandas as pd 
+import pandas as pd
+import os
 
 def main():
     
@@ -8,24 +9,19 @@ def main():
     df = leer_archivos()
     df = agregar_filtros(df, pp)
     
-    
-    dia = input("Dia: ")
-    mes = input("# del mes: ")
-    fecha_completa = pd.to_datetime(f'{dia}/{mes}/22', dayfirst=True)
-    
     renombrar_columnas(df)
-    agregar_columnas(df, fecha_completa)
+    agregar_columnas(df)
+    
     #Agregar tipo entidad
     try:
         tipo_entidad = df["tipo de entidad"].iloc[0]
         nombre_entidad_acortado = tipo_entidad[3::]
     except Exception: 
-        print("NO SE ENCONTRÓ PP SOLICITADA...")
+        print("NO SE ENCONTRÓ TIPO ENTIDAD...")
         nombre_entidad_acortado = "Vacia"
     
     df = cambiar_orden_columnas(df)
     agregar_cuenta_pagadora(df)
-    visualizar_datos(df) 
     
     #Recuperando el numero de subsidiaria para incluir en el nombre
     try:
@@ -34,11 +30,18 @@ def main():
         print("ERROR CON PP (No encontrada)")
         num_subsidiaria = 0
     
+    nombre_estado_cuentas = input("Nombre de estado de cuentas: ")
+    #Función que permite colocar automaticamente id externo y fecha
+    try:
+        idexterno_fecha(df, nombre_estado_cuentas)
+    except Exception:
+        print(f"ERROR EN EL ARCHIVO DE ESTADO DE CUENTA: {nombre_estado_cuentas}")
+        
+    ##visualizar_datos(df) 
     exportar_datos(df, pp, nombre_entidad_acortado, num_subsidiaria) 
 
 def leer_archivos():
-    print("Leyendo archivo")
-    import os
+    #print("Leyendo archivo")
 
     #Pedir al usuario que ingrese el nombre del archivo
     path = "C:\\Users\\jaam2\\OneDrive\\Escritorio\\Automatizacion Python-Hugo\\Input\\"
@@ -56,7 +59,7 @@ def leer_archivos():
     return df
 
 def agregar_filtros(df, pp):
-    print("Agregando filtros...")
+    #print("Agregando filtros...")
     df = df[df["propuesta de pago relacionada"]== f"PP-{pp}"] 
     return df
     
@@ -69,7 +72,7 @@ def visualizar_datos(df):
 
 def exportar_datos(df, pp, nombre_entidad_acortado, num_subsidiaria):
     #Exportar a la carpeta output
-    print("Exportando archivo procesado...")
+    #print("Exportando archivo procesado...")
     try:
         df.to_csv(f"C:\\Users\\jaam2\\OneDrive\\Escritorio\\Automatizacion Python-Hugo\\Output\\PP-{pp} {nombre_entidad_acortado} {num_subsidiaria} CONT.csv",
             sep = ",", #Separador que queremos
@@ -87,7 +90,7 @@ def exportar_datos(df, pp, nombre_entidad_acortado, num_subsidiaria):
             #latin1
     
 def renombrar_columnas(df):
-    print('Cambiando nombres...')
+    #print('Cambiando nombres...')
 
     df.rename(columns={"moneda":"Moneda"}, inplace = True)
     df.rename(columns={"nota":"Nota"}, inplace = True)
@@ -100,7 +103,7 @@ def renombrar_columnas(df):
     df.rename(columns={"id interno subsidiaria":"Id Interno Subsidiaria"}, inplace = True)
  
 
-def agregar_columnas(df, fecha_completa):
+def agregar_columnas(df):
     rows = df.shape[0]
     
     df.insert(0, "ID interno cuenta pagadora", 0) #Solo se crea la columna
@@ -110,7 +113,7 @@ def agregar_columnas(df, fecha_completa):
     #df.insert(8, "Id Interno Subsidiaria", "15")
     
     #Info de otras 
-    df.insert(9, "Fecha", fecha_completa)
+    df.insert(9, "Fecha", "")
     df.insert(10, "ID externo", "")
         
 def cambiar_orden_columnas(df): 
@@ -122,7 +125,7 @@ def cambiar_orden_columnas(df):
     return df
 
 def agregar_cuenta_pagadora(df):
-    rows = df.shape[0] # == 3
+    rows = df.shape[0] 
     for i in range(rows):
         if df.iloc[i, 3] == "US Dollar" and df.iloc[i, 7] == 15: # SV
             df.iat[i,0] = 724
@@ -149,6 +152,28 @@ def agregar_cuenta_pagadora(df):
         else:
             df.iat[i, 0] = 0
 
+def idexterno_fecha(df, nombre_estado_cuentas):
+    #! leer estado de cuenta
+    #Buscar archivo
+    path = "C:\\Users\\jaam2\\OneDrive\\Escritorio\\Automatizacion Python-Hugo\\Input\\"
+    filename = nombre_estado_cuentas + ".xlsx"
+    fullpath = os.path.join(path, filename)
+    df_estado_cuentas = pd.read_excel(fullpath, header= 0)
+
+    #! Hacer match con el monto
+    rows_df = df.shape[0]
+     
+    for i in range(rows_df):        
+        df_estados_filtrado = df_estado_cuentas[df_estado_cuentas["Valor"]== df.iloc[i, 10]]
+        #Si exactamente un monto coincide, entonces: 
+        if df_estados_filtrado.shape[0] == 1:
+            #Cambiando los valores de fecha: 
+            df.iat[i, 8] = df_estados_filtrado.iloc[0, 0]
+            #Cambiando los valores de referencia:
+            df.iat[i, 9] = df_estados_filtrado.iloc[0, 2]
+        else:
+            print(f"REVISAR LINEA #{i+1}: NO SE COLOCÓ ID NI FECHA")
+                                                
 
 #print(df.shape) #Mirar las dimensiones del archivo (filas, columnas)
 #print(df.columns) #Sirve para ver el nombre de las columnas
