@@ -13,6 +13,6 @@ columnas_minusculas =["id interno factura", "id interno empleado",
 for i in range(len(input_cols)):
     input_cols[i] = input_cols[i].lower()
 """
-documento = r"C:\Users\jaam2\OneDrive\Escritorio\Automatizacion Python-Hugo\Input\Carga pt1.xlsx"
-df = pd.read_excel(documento)
 
+documento = r"C:\Users\jaam2\OneDrive\Escritorio\Automatizacion Python-Hugo\Input\Carga Walmart 13 mayo.xlsx"
+df = pd.read_excel(documento)
