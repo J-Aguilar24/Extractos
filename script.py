@@ -29,6 +29,9 @@ def main():
     except Exception: 
         print("ERROR CON PP (No encontrada)")
         num_subsidiaria = 0
+        
+    if num_subsidiaria > 0 and nombre_entidad_acortado == "Vacia":
+        nombre_entidad_acortado = ""
     
     nombre_estado_cuentas = input("Nombre de estado de cuentas: ")
     #Función que permite colocar automaticamente id externo y fecha
@@ -88,7 +91,7 @@ def exportar_datos(df, pp, nombre_entidad_acortado, num_subsidiaria):
             index= False,
             encoding='utf-8') #Para que la primera columna no sea un autonumerico 
             #latin1
-    
+    print("*--------------------------------------------------------------------------------------------*")
 def renombrar_columnas(df):
     #print('Cambiando nombres...')
 
