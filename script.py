@@ -37,10 +37,10 @@ def main():
     #Función que permite colocar automaticamente id externo y fecha
     try:
         idexterno_fecha(df, nombre_estado_cuentas)
-    except Exception:
-        print(f"ERROR EN EL ARCHIVO DE ESTADO DE CUENTA: {nombre_estado_cuentas}")
+    except FileNotFoundError:
+        print(f"No se encontró el archivo: {nombre_estado_cuentas}")
         
-    ##visualizar_datos(df) 
+    visualizar_datos(df) 
     exportar_datos(df, pp, nombre_entidad_acortado, num_subsidiaria) 
 
 def leer_archivos():
@@ -93,8 +93,6 @@ def exportar_datos(df, pp, nombre_entidad_acortado, num_subsidiaria):
             #latin1
     print("*------------------------------------------------------------------------------------------------------------*")
 def renombrar_columnas(df):
-    #print('Cambiando nombres...')
-
     df.rename(columns={"moneda":"Moneda"}, inplace = True)
     df.rename(columns={"nota":"Nota"}, inplace = True)
     df.rename(columns={"monto a pagar":"Monto a Pagar"}, inplace = True)
@@ -162,12 +160,16 @@ def idexterno_fecha(df, nombre_estado_cuentas):
     filename = nombre_estado_cuentas + ".xlsx"
     fullpath = os.path.join(path, filename)
     df_estado_cuentas = pd.read_excel(fullpath, header= 0)
+    df_estado_cuentas["Valor"] = [float(str(i).replace(",", "")) for i in df_estado_cuentas["Valor"]]
 
     #! Hacer match con el monto
     rows_df = df.shape[0]
+    no_completados = 0
      
-    for i in range(rows_df):        
+    for i in range(rows_df):
         df_estados_filtrado = df_estado_cuentas[df_estado_cuentas["Valor"]== df.iloc[i, 10]]
+        monto = df.iloc[i, 10]
+        
         #Si exactamente un monto coincide, entonces: 
         if df_estados_filtrado.shape[0] == 1:
             #Cambiando los valores de fecha: 
@@ -175,8 +177,11 @@ def idexterno_fecha(df, nombre_estado_cuentas):
             #Cambiando los valores de referencia:
             df.iat[i, 9] = df_estados_filtrado.iloc[0, 2]
         else:
-            print(f"REVISAR LINEA #{i+1}: NO SE COLOCÓ ID NI FECHA")
-                                                
+            print(f"No se encontró el valor: {monto}")
+            no_completados = no_completados + 1
+            
+    completados = rows_df - no_completados 
+    print(f"Se completaron id y fecha: {completados} de {rows_df}")                
 
 #print(df.shape) #Mirar las dimensiones del archivo (filas, columnas)
 #print(df.columns) #Sirve para ver el nombre de las columnas
