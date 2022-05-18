@@ -31,7 +31,7 @@ def main():
         num_subsidiaria = 0
         
     if num_subsidiaria > 0 and nombre_entidad_acortado == "Vacia":
-        nombre_entidad_acortado = ""
+        nombre_entidad_acortado = "Walmart"
         
     nombre_estado_cuentas = input("Nombre de estado de cuentas: ")
     #Función que permite colocar automaticamente id externo y fecha
@@ -40,7 +40,7 @@ def main():
     except FileNotFoundError:
         print(f"No se encontró el archivo: {nombre_estado_cuentas}")
         
-    visualizar_datos(df) 
+    #visualizar_datos(df) 
     exportar_datos(df, pp, nombre_entidad_acortado, num_subsidiaria) 
 
 def leer_archivos():
@@ -177,7 +177,7 @@ def idexterno_fecha(df, nombre_estado_cuentas):
             #Cambiando los valores de referencia:
             df.iat[i, 9] = df_estados_filtrado.iloc[0, 2]
         else:
-            print(f"No se encontró el valor: {monto}")
+            print(f"ERROR para el monto: {monto}")
             no_completados = no_completados + 1
             
     completados = rows_df - no_completados 
